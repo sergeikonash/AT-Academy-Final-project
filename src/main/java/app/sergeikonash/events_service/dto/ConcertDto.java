@@ -3,9 +3,9 @@ package app.sergeikonash.events_service.dto;
 import app.sergeikonash.events_service.dto.enums.Status;
 import app.sergeikonash.events_service.dto.enums.Type;
 
-import java.time.LocalDateTime;
+import java.util.UUID;
 
-public class ConcertRead {
+public class ConcertDto {
 
     private long id;
     private String title;
@@ -14,16 +14,13 @@ public class ConcertRead {
     private long dt_end_of_sale;
     private Type type;
     private Status status;
-    private String category;
-    private LocalDateTime dtCreate;
-    private LocalDateTime dtUpdate;
+    private UUID category;
 
-    public ConcertRead() {
+    public ConcertDto() {
     }
 
-    public ConcertRead(long id, String title, String description, long dt_event,
-                       long dt_end_of_sale, String type, String status, String category,
-                       LocalDateTime dtCreate, LocalDateTime dtUpdate) {
+    public ConcertDto(long id, String title, String description, long dt_event,
+                      long dt_end_of_sale, String type, String status, UUID category) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -32,8 +29,6 @@ public class ConcertRead {
         this.type = Type.valueOf(type);
         this.status = Status.valueOf(status);
         this.category = category;
-        this.dtCreate = dtCreate;
-        this.dtUpdate = dtUpdate;
     }
 
     public long getId() {
@@ -92,27 +87,11 @@ public class ConcertRead {
         this.status = Status.valueOf(status);
     }
 
-    public String getCategory() {
+    public UUID getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(UUID category) {
         this.category = category;
-    }
-
-    public LocalDateTime getDtCreate() {
-        return dtCreate;
-    }
-
-    public void setDtCreate(LocalDateTime dtCreate) {
-        this.dtCreate = dtCreate;
-    }
-
-    public LocalDateTime getDtUpdate() {
-        return dtUpdate;
-    }
-
-    public void setDtUpdate(LocalDateTime dtUpdate) {
-        this.dtUpdate = dtUpdate;
     }
 }

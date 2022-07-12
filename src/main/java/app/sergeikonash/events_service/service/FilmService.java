@@ -2,15 +2,17 @@ package app.sergeikonash.events_service.service;
 
 import app.sergeikonash.events_service.dao.api.IFilmDao;
 import app.sergeikonash.events_service.dao.entity.Film;
-import app.sergeikonash.events_service.dto.FilmCreate;
+import app.sergeikonash.events_service.dto.FilmDto;
 import app.sergeikonash.events_service.service.api.IEventService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.UUID;
 
 @Service
-public class FilmService implements IEventService<Film, FilmCreate> {
+public class FilmService implements IEventService<Film, FilmDto> {
 
     private final IFilmDao filmDao;
 
@@ -19,47 +21,47 @@ public class FilmService implements IEventService<Film, FilmCreate> {
     }
 
     @Override
-    public Film createEvent(FilmCreate filmCreate) {
-        if (filmCreate.getTitle() == null || filmCreate.getType() == null) {
+    public Film createEvent(FilmDto filmDto) {
+        if (filmDto.getTitle() == null || filmDto.getType() == null) {
             throw new IllegalArgumentException("This field cannot be empty");
         }
 
         Film film = new Film();
-        film.setTitle(filmCreate.getTitle());
-        film.setDescription(filmCreate.getDescription());
-        film.setDt_event(filmCreate.getDt_event());
-        film.setDt_end_of_sale(filmCreate.getDt_end_of_sale());
-        film.setType(filmCreate.getType());
-        film.setStatus(filmCreate.getStatus());
-        film.setCountry(filmCreate.getCountry());
-        film.setRelease_year(filmCreate.getRelease_year());
-        film.setRelease_date(filmCreate.getRelease_date());
-        film.setDuration(filmCreate.getDuration());
+        film.setTitle(filmDto.getTitle());
+        film.setDescription(filmDto.getDescription());
+        film.setDt_event(filmDto.getDt_event());
+        film.setDt_end_of_sale(filmDto.getDt_end_of_sale());
+        film.setType(filmDto.getType());
+        film.setStatus(filmDto.getStatus());
+        film.setCountry(filmDto.getCountry());
+        film.setRelease_year(filmDto.getRelease_year());
+        film.setRelease_date(filmDto.getRelease_date());
+        film.setDuration(filmDto.getDuration());
         film.setDtCreate(LocalDateTime.now());
         film.setDtUpdate(LocalDateTime.now());
-        return (Film) this.filmDao.save(film);
+        return this.filmDao.save(film);
     }
 
     @Override
-    public Film getById(Long id) {
-        if (id == null || id <= 0) {
+    public Film findByUuid(UUID uuid) {
+        if (uuid == null) {
             throw new IllegalArgumentException("Это поле не может быть пустым");
         }
 
         return this.filmDao
-                .findById(id)
+                .findById(uuid)
                 .orElseThrow(() -> {
                     throw new IllegalArgumentException("Не нашли такого события");
                 });
     }
 
     @Override
-    public Film editById(FilmCreate toEdit, Long id, LocalDateTime dtUpdate) {
-        if (id == null || id <= 0) {
+    public Film editByUuid(FilmDto toEdit, UUID uuid, LocalDateTime dtUpdate) {
+        if (uuid == null) {
             throw new IllegalArgumentException("Это поле не может быть пустым");
         }
 
-        Film film = this.getById(id);
+        Film film = this.findByUuid(uuid);
 
         if(!film.getDtUpdate().equals(dtUpdate)){
             throw new IllegalArgumentException("Событие уже было обновлено кем-то ранее");
@@ -78,16 +80,11 @@ public class FilmService implements IEventService<Film, FilmCreate> {
         film.setDtUpdate(LocalDateTime.now());
         this.filmDao.save(film);
 
-        return this.getById(id);
+        return this.findByUuid(uuid);
     }
 
     @Override
-    public List<Film> getAll() {
-        return this.filmDao.findAll();
-    }
-
-    @Override
-    public List<Film> getAll(String title) {
-        return this.filmDao.findByTitle(title);
+    public Page<Film> findPageOfEvents(Pageable pageable) {
+        return this.filmDao.findAll(pageable);
     }
 }

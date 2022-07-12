@@ -2,15 +2,17 @@ package app.sergeikonash.events_service.service;
 
 import app.sergeikonash.events_service.dao.api.IConcertDao;
 import app.sergeikonash.events_service.dao.entity.Concert;
-import app.sergeikonash.events_service.dto.ConcertCreate;
+import app.sergeikonash.events_service.dto.ConcertDto;
 import app.sergeikonash.events_service.service.api.IEventService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.UUID;
 
 @Service
-public class ConcertService implements IEventService<Concert, ConcertCreate> {
+public class ConcertService implements IEventService<Concert, ConcertDto> {
 
     private final IConcertDao concertDao;
 
@@ -19,47 +21,47 @@ public class ConcertService implements IEventService<Concert, ConcertCreate> {
     }
 
     @Override
-    public Concert createEvent(ConcertCreate concertCreate) {
+    public Concert createEvent(ConcertDto concertDto) {
 
-        if (concertCreate.getTitle() == null || concertCreate.getType() == null) {
+        if (concertDto.getTitle() == null || concertDto.getType() == null) {
             throw new IllegalArgumentException("This field cannot be empty");
         }
 
         Concert concert = new Concert();
-        concert.setTitle(concertCreate.getTitle());
-        concert.setDescription(concertCreate.getDescription());
-        concert.setDt_event(concertCreate.getDt_event());
-        concert.setDt_end_of_sale(concertCreate.getDt_end_of_sale());
-        concert.setType(concertCreate.getType());
-        concert.setStatus(concertCreate.getStatus());
-        concert.setCategory(concertCreate.getCategory());
+        concert.setTitle(concertDto.getTitle());
+        concert.setDescription(concertDto.getDescription());
+        concert.setDt_event(concertDto.getDt_event());
+        concert.setDt_end_of_sale(concertDto.getDt_end_of_sale());
+        concert.setType(concertDto.getType());
+        concert.setStatus(concertDto.getStatus());
+        concert.setCategory(concertDto.getCategory());
         concert.setDtCreate(LocalDateTime.now());
         concert.setDtUpdate(LocalDateTime.now());
-        return (Concert) this.concertDao.save(concert);
+        return this.concertDao.save(concert);
     }
 
     @Override
-    public Concert getById(Long id) {
-        if (id == null || id <= 0) {
+    public Concert findByUuid(UUID uuid) {
+        if (uuid == null) {
             throw new IllegalArgumentException("Это поле не может быть пустым");
         }
 
         return this.concertDao
-                .findById(id)
+                .findById(uuid)
                 .orElseThrow(() -> {
                     throw new IllegalArgumentException("Не нашли такого события");
                 });
     }
 
     @Override
-    public Concert editById(ConcertCreate toEdit, Long id, LocalDateTime dtUpdate) {
-        if (id == null || id <= 0) {
+    public Concert editByUuid(ConcertDto toEdit, UUID uuid, LocalDateTime dtUpdate) {
+        if (uuid == null) {
             throw new IllegalArgumentException("Это поле не может быть пустым");
         }
 
-        Concert concert = this.getById(id);
+        Concert concert = this.findByUuid(uuid);
 
-        if(!concert.getDtUpdate().equals(dtUpdate)){
+        if(concert.getDtUpdate().equals(dtUpdate)){
             throw new IllegalArgumentException("Событие уже было обновлено кем-то ранее");
         }
 
@@ -73,16 +75,11 @@ public class ConcertService implements IEventService<Concert, ConcertCreate> {
         concert.setDtUpdate(LocalDateTime.now());
         this.concertDao.save(concert);
 
-        return this.getById(id);
+        return this.findByUuid(uuid);
     }
 
     @Override
-    public List<Concert> getAll() {
-        return this.concertDao.findAll();
-    }
-
-    @Override
-    public List<Concert> getAll(String title) {
-        return this.concertDao.findByTitle(title);
+    public Page<Concert> findPageOfEvents(Pageable pageable) {
+        return this.concertDao.findAll(pageable);
     }
 }

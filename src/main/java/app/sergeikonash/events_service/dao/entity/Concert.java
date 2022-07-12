@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "concerts", schema = "events")
@@ -38,7 +39,7 @@ public class Concert implements Serializable {
     String status;
 
     @Column(name = "category")
-    String category;
+    UUID category;
 
     @Column(name = "date_create")
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -61,7 +62,7 @@ public class Concert implements Serializable {
                    long dt_end_of_sale,
                    String type,
                    String status,
-                   String category,
+                   UUID category,
                    LocalDateTime dtCreate,
                    LocalDateTime dtUpdate) {
         this.id = id;
@@ -132,11 +133,11 @@ public class Concert implements Serializable {
         this.status = status;
     }
 
-    public String getCategory() {
+    public UUID getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(UUID category) {
         this.category = category;
     }
 

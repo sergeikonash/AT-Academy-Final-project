@@ -4,8 +4,9 @@ import app.sergeikonash.events_service.dto.enums.Status;
 import app.sergeikonash.events_service.dto.enums.Type;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
-public class FilmCreate {
+public class FilmDto {
 
     private long id;
     private String title;
@@ -14,25 +15,25 @@ public class FilmCreate {
     private long dt_end_of_sale;
     private Type type;
     private Status status;
-    private String country;
+    private UUID country;
     private int release_year;
     private LocalDate release_date;
     private int duration;
 
-    public FilmCreate() {
+    public FilmDto() {
     }
 
-    public FilmCreate(long id,
-                      String title,
-                      String description,
-                      long dt_event,
-                      long dt_end_of_sale,
-                      String type,
-                      String status,
-                      String country,
-                      int release_year,
-                      LocalDate release_date,
-                      int duration) {
+    public FilmDto(long id,
+                   String title,
+                   String description,
+                   long dt_event,
+                   long dt_end_of_sale,
+                   String type,
+                   String status,
+                   UUID country,
+                   int release_year,
+                   LocalDate release_date,
+                   int duration) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -102,11 +103,11 @@ public class FilmCreate {
         this.status = Status.valueOf(status);
     }
 
-    public String getCountry() {
+    public UUID getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(UUID country) {
         this.country = country;
     }
 

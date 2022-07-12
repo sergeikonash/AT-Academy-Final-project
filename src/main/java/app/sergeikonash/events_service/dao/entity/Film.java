@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "films", schema = "events")
@@ -39,7 +40,7 @@ public class Film implements Serializable{
     private String status;
 
     @Column(name = "country")
-    private String country;
+    private UUID country;
 
     @Column(name = "release_year")
     private int release_year;
@@ -71,7 +72,7 @@ public class Film implements Serializable{
                 long dt_end_of_sale,
                 String type,
                 String status,
-                String country,
+                UUID country,
                 int release_year,
                 LocalDate release_date,
                 int duration,
@@ -148,11 +149,11 @@ public class Film implements Serializable{
         this.status = status;
     }
 
-    public String getCountry() {
+    public UUID getCountry() {
         return country;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(UUID country) {
         this.country = country;
     }
 
